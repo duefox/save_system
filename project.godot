@@ -27,4 +27,4 @@ enabled=PackedStringArray("res://addons/gdscript_formatter/plugin.cfg", "res://a
 
 defaults/save_directory="res://saves"
 auto_save/interval_seconds=10.0
-defaults/serialization_format="json"
+defaults/serialization_format="binary"

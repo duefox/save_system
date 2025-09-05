@@ -63,18 +63,20 @@ signal auto_save_created(save_name: String)  # 自动存档创建
 	set(_value):
 		push_error("read-only")
 
-## 设置密钥
+## 加密密钥
 var encryption_key: String:
 	get:
-		return ProjectSettings.get_setting(SETTING_SAVE_SYSTEM_DEFAULTS + "encryption_key", "123456")
+		var set_key: String = ProjectSettings.get_setting(SETTING_SAVE_SYSTEM_DEFAULTS + "encryption_key", "123456")
+		var md5: String = HashManager.hash_md5(set_key)
+		return md5
 	set(_value):
-		ProjectSettings.set_setting(SETTING_SAVE_SYSTEM_DEFAULTS + "encryption_key", _value)
+		push_error("read-only")
 
 # 私有变量
 var _current_id: String = ""
 var _current_save_name: String = ""
 var _auto_save_timer: float = 0
-var _encryption_key: String = "123456"  # TODO: 从安全的地方获取
+var _encryption_key: String = "123456"  # 从安全的地方获取
 var _save_strategy: SaveFormatStrategy
 var _pending_node_states: Dictionary = {}
 

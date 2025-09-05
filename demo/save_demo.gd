@@ -8,7 +8,7 @@ extends Node2D
 @onready var line_edit_exp: LineEdit = %LineEditExp
 @onready var label: Label = %Label
 
-@onready var _save_manager := SaveSystem
+@onready var _save_manager: SaveSystem = SaveSystem
 
 var _current_save_name: String = ""
 
@@ -29,6 +29,13 @@ func _ready():
 	_update_player_display()
 	label.text = "自动存档：{0}".format(["是" if _save_manager.auto_save_enabled else "否"])
 
+	#hash
+	var md5: String = HashManager.hash_md5("res://demo/save_demo.tscn")
+	var sha1: String = HashManager.hash_sha1("res://demo/save_demo.tscn")
+	var sha256: String = HashManager.hash_sha256("res://demo/save_demo.tscn")
+	print("md5:", md5)
+	print("sha1:", sha1)
+	print("sha256:", sha256)
 
 ## 更新存档列表
 func _update_save_list():
