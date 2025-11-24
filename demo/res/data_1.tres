@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TestData" load_steps=2 format=3 uid="uid://o8ly8py5ok7w"]
+
+[ext_resource type="Script" uid="uid://c3mdigaicergk" path="res://demo/model/test_data.gd" id="1_u13q6"]
+
+[resource]
+script = ExtResource("1_u13q6")
+id = "2000"
+nickname = "测试"
+descrip = "我是描述"
+metadata/_custom_type_script = "uid://c3mdigaicergk"

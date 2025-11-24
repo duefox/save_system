@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TestData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://demo/model/test_data.gd" id="1_xnme7"]
+
+[resource]
+script = ExtResource("1_xnme7")
+id = "2000"
+nickname = "测试"
+descrip = "我是描述"
+metadata/_custom_type_script = "uid://c3mdigaicergk"

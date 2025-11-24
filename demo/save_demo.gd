@@ -10,6 +10,8 @@ extends Node2D
 
 @onready var _save_manager: SaveSystem = SaveSystem
 
+var test_data: Resource = preload("res://demo/res/data_1.tres")
+
 var _current_save_name: String = ""
 
 
@@ -30,12 +32,13 @@ func _ready():
 	label.text = "自动存档：{0}".format(["是" if _save_manager.auto_save_enabled else "否"])
 
 	#hash
-	var md5: String = HashManager.hash_md5("res://demo/save_demo.tscn")
-	var sha1: String = HashManager.hash_sha1("res://demo/save_demo.tscn")
-	var sha256: String = HashManager.hash_sha256("res://demo/save_demo.tscn")
-	print("md5:", md5)
-	print("sha1:", sha1)
-	print("sha256:", sha256)
+	#var md5: String = HashManager.hash_md5("res://demo/save_demo.tscn")
+	#var sha1: String = HashManager.hash_sha1("res://demo/save_demo.tscn")
+	#var sha256: String = HashManager.hash_sha256("res://demo/save_demo.tscn")
+	#print("md5:", md5)
+	#print("sha1:", sha1)
+	#print("sha256:", sha256)
+
 
 ## 更新存档列表
 func _update_save_list():
@@ -131,8 +134,8 @@ func _on_delete_button_pressed():
 
 
 ## 存档创建回调
-func _on_save_created(save_name: String, metadata: Dictionary):
-	print("存档已创建：" + save_name)
+func _on_save_created(save_name: String, _metadata: Dictionary):
+	print("_on_save_created->存档已创建：" + save_name)
 
 
 ## 存档加载回调
@@ -152,3 +155,18 @@ func _on_save_deleted(save_name: String):
 func _on_auto_save_created(save_name: String):
 	print("自动存档已创建->auto_save_name:", save_name)
 	_update_save_list()
+
+
+## 单独保存文件
+func _on_btn_save_as_pressed() -> void:
+	var success: bool = await SaveSystem.save_as(test_data, "test_data")
+	print("save_as->success:", success)
+
+
+## 单独加载文件
+func _on_btn_load_as_pressed() -> void:
+	var result: Variant = await SaveSystem.load_as("test_data", false)
+	if result is Resource:
+		print("id:", result.id, ",nickname:", result.nickname, ",descrip:", result.descrip)
+	elif result is Dictionary:
+		print(result)

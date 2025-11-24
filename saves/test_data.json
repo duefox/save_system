@@ -1,0 +1,12 @@
+{
+	"data": {
+		"resource_path": "res://demo/res/data_1.tres",
+		"props": {
+			"id": "2000",
+			"nickname": "测试",
+			"descrip": "我是描述",
+			"metadata/_custom_type_script": "uid://c3mdigaicergk"
+		},
+		"_type_": 24
+	}
+}

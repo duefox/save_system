@@ -15,7 +15,7 @@ func set_encryption_key(key: String) -> void:
 
 
 ## 保存数据
-func save(path: String, data: Dictionary) -> bool:
+func save(path: String, data: Dictionary, with_metadata: bool = true) -> bool:
 	var processed_data: Dictionary = _process_data_for_save(data)
 	var task_id: String = _io_manager.write_file_async(path, processed_data, _encryption_key)
 	var result: Array = await _io_manager.io_completed
@@ -23,7 +23,7 @@ func save(path: String, data: Dictionary) -> bool:
 
 
 ## 加载数据
-func load_save(path: String) -> Dictionary:
+func load_save(path: String,with_metadata: bool = true) -> Dictionary:
 	var task_id: String = _io_manager.read_file_async(path, _encryption_key)
 	var result: Array = await _io_manager.io_completed
 	if result[0] == task_id and result[1]:

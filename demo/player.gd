@@ -1,4 +1,4 @@
-extends Node
+extends Node2D
 
 ## 玩家基本属性
 @export var player_name: String = "Player"
@@ -11,6 +11,7 @@ func _ready() -> void:
 	SaveSystem.register_saveable_node(self)
 
 func save() -> Dictionary:
+	print("begin save")
 	return {
 		"player_name": player_name,
 		"player_level": player_level,
@@ -19,6 +20,7 @@ func save() -> Dictionary:
 	}
 
 func load_data(data: Dictionary) -> void:
+	print("load data from save")
 	player_name = data.get("player_name", player_name)
 	player_level = data.get("player_level", player_level)
 	player_exp = data.get("player_exp", player_exp)

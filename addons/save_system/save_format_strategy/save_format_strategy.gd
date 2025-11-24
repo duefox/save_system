@@ -29,15 +29,18 @@ func get_save_path(directory: String, save_name: String) -> String:
 ## [param path] 存档路径
 ## [param data] 存储数据
 ## [param callback] 完成回调，参数bool是否完成
-func save(path: String, data: Dictionary) -> bool:
+func save(path: String, data: Dictionary, with_metadata: bool = true) -> bool:
 	return false
 
 
 ## 加载数据
 ## [param path] 存档路径
 ## [param callback] 完成回调，参数：bool是否完成，Dictionary存档数据
-func load_save(path: String) -> Dictionary:
-	return {}
+func load_save(path: String, with_metadata: bool = true) -> Variant:
+	if with_metadata:
+		return {}
+	else:
+		return null
 
 
 ## 加载元数据

@@ -105,7 +105,7 @@ func _process(delta: float) -> void:
 #region 公共API
 
 
-# 注册存档节点
+## 注册存档节点
 func register_saveable_node(node: Node) -> void:
 	if not node.is_in_group(save_group):
 		node.add_to_group(save_group)
@@ -125,12 +125,12 @@ func register_saveable_node(node: Node) -> void:
 			push_warning("节点 %s 缺少 load_data 方法，无法应用缓存状态！" % node_path)
 
 
-# 设置存档格式
+## 设置存档格式
 func set_save_format(format: StringName) -> void:
 	_set_save_format(format)
 
 
-# 创建存档
+## 创建存档
 func create_save(save_name: String = "") -> bool:
 	# 存档文件名
 	var actual_name = _generate_save_name() if save_name.is_empty() else save_name
@@ -167,7 +167,28 @@ func create_save(save_name: String = "") -> bool:
 	return false
 
 
-# 加载存档
+## 存储单个资源文件
+func save_as(save_data: Variant, save_name: String = "") -> bool:
+	# 存档文件名
+	var actual_name = _generate_save_name() if save_name.is_empty() else save_name
+	# 存档id
+	var save_id: String = ""
+	if _current_id:
+		save_id = _current_id
+	else:
+		# 新档的id为建立时的时间戳
+		save_id = _get_auto_save_id(actual_name)
+	# 存储数据
+	var save_path = _get_save_path(actual_name)
+	# 收集数据
+	var save_dict: Dictionary = {
+		"data": save_data,
+	}
+	var success: bool = await _save_strategy.save(save_path, save_dict, false)
+	return success
+
+
+## 加载存档
 func load_save(save_name: String) -> bool:
 	if save_name.is_empty():
 		return false
@@ -185,7 +206,16 @@ func load_save(save_name: String) -> bool:
 	return false
 
 
-# 删除存档
+## 加载为单个独立文件
+func load_as(save_name: String, with_metadata: bool = true) -> Variant:
+	if save_name.is_empty():
+		return null
+	var save_path = _get_save_path(save_name)
+	var result = await _save_strategy.load_save(save_path, with_metadata)
+	return result
+
+
+## 删除存档
 func delete_save(save_name: String) -> bool:
 	var save_path = _get_save_path(save_name)
 	var success = _save_strategy.delete_file(save_path)
@@ -200,13 +230,13 @@ func delete_save(save_name: String) -> bool:
 	return false
 
 
-# 覆盖存档
+## 覆盖存档
 func overwrite_save(save_name: String) -> String:
 	var new_save_name: String = await create_auto_save(save_name)
 	return new_save_name
 
 
-# 创建自动存档
+## 创建自动存档
 func create_auto_save(auto_save_name: String = "") -> String:
 	# 自动计时器归零
 	_auto_save_timer = 0
@@ -229,7 +259,7 @@ func create_auto_save(auto_save_name: String = "") -> String:
 	return auto_save_name
 
 
-# 获取所有存档列表
+## 获取所有存档列表
 func get_save_list() -> Array[Dictionary]:
 	var saves: Array[Dictionary] = []
 
@@ -248,7 +278,7 @@ func get_save_list() -> Array[Dictionary]:
 	return saves
 
 
-# 注册自定义存档格式策略
+## 注册自定义存档格式策略
 func register_save_format_strategy(format: StringName, strategy: SaveFormatStrategy) -> void:
 	_strategies[format] = strategy
 
