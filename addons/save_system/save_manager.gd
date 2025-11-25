@@ -167,8 +167,8 @@ func create_save(save_name: String = "") -> bool:
 	return false
 
 
-## 存储单个资源文件
-func save_as(save_data: Variant, save_name: String = "") -> bool:
+## 导出单个资源文件
+func export_as(save_data: Variant, save_name: String = "") -> bool:
 	# 存档文件名
 	var actual_name = _generate_save_name() if save_name.is_empty() else save_name
 	# 存档id
@@ -206,8 +206,8 @@ func load_save(save_name: String) -> bool:
 	return false
 
 
-## 加载为单个独立文件
-func load_as(save_name: String, with_metadata: bool = true) -> Variant:
+## 导入单个独立文件
+func import_as(save_name: String, with_metadata: bool = true) -> Variant:
 	if save_name.is_empty():
 		return null
 	var save_path = _get_save_path(save_name)

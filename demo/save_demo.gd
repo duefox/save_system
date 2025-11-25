@@ -157,15 +157,15 @@ func _on_auto_save_created(save_name: String):
 	_update_save_list()
 
 
-## 单独保存文件
+## 导出单独文件
 func _on_btn_save_as_pressed() -> void:
-	var success: bool = await SaveSystem.save_as(test_data, "test_data")
+	var success: bool = await SaveSystem.export_as(test_data, "test_data")
 	print("save_as->success:", success)
 
 
-## 单独加载文件
+## 导入单独文件
 func _on_btn_load_as_pressed() -> void:
-	var result: Variant = await SaveSystem.load_as("test_data", false)
+	var result: Variant = await SaveSystem.import_as("test_data", false)
 	if result is Resource:
 		print("id:", result.id, ",nickname:", result.nickname, ",descrip:", result.descrip)
 	elif result is Dictionary:
