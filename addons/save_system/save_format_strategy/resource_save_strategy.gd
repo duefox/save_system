@@ -19,6 +19,13 @@ func get_save_path(directory: String, save_name: String) -> String:
 	return directory.path_join("%s.tres" % save_name)
 
 
+## 获取导出存档的绝对路径
+## @param directory：指定的存档文件夹
+## @param save_name：存档文件名
+func get_absolute_path(directory: String, save_name: String) -> String:
+	return directory.path_join("%s.tres" % save_name)
+
+
 ## 保存存档
 func save(path: String, data: Dictionary, with_metadata: bool = true) -> bool:
 	# 假如不存在路径则创建路径

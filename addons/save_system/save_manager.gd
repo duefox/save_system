@@ -130,6 +130,11 @@ func set_save_format(format: StringName) -> void:
 	_set_save_format(format)
 
 
+## 根据名称ID获取存档的文件夹
+func get_save_base_dir(save_name: String) -> String:
+	return _get_save_path(save_name).get_base_dir()
+
+
 ## 创建存档
 func create_save(save_name: String = "") -> bool:
 	# 存档文件名
@@ -168,7 +173,10 @@ func create_save(save_name: String = "") -> bool:
 
 
 ## 导出单个资源文件
-func export_as(save_data: Variant, save_name: String = "") -> bool:
+## @param save_data：要导出的数据
+## @param save_name：导出的文件名
+## @param save_base_path：指定导出路径
+func export_as(save_data: Variant, save_name: String = "", save_base_path: String = "") -> bool:
 	# 存档文件名
 	var actual_name = _generate_save_name() if save_name.is_empty() else save_name
 	# 存档id
@@ -179,7 +187,11 @@ func export_as(save_data: Variant, save_name: String = "") -> bool:
 		# 新档的id为建立时的时间戳
 		save_id = _get_auto_save_id(actual_name)
 	# 存储数据
-	var save_path = _get_save_path(actual_name)
+	var save_path: String = ""
+	if save_base_path.is_empty():
+		save_path = _get_save_path(actual_name)
+	else:
+		save_path = _get_absolute_path(save_base_path, save_name)
 	# 收集数据
 	var save_dict: Dictionary = {
 		"data": save_data,
@@ -193,9 +205,6 @@ func load_save(save_name: String) -> bool:
 	if save_name.is_empty():
 		return false
 	var save_path = _get_save_path(save_name)
-
-	print("load_save->save_path:", save_path)
-
 	var result = await _save_strategy.load_save(save_path)
 	if not result.is_empty():
 		_current_save_name = save_name
@@ -208,10 +217,15 @@ func load_save(save_name: String) -> bool:
 
 
 ## 导入单个独立文件
-func import_as(save_name: String) -> Variant:
+func import_as(save_name: String, save_base_path: String = "") -> Variant:
 	if save_name.is_empty():
 		return null
-	var save_path = _get_save_path(save_name)
+	# 存储数据
+	var save_path: String = ""
+	if save_base_path.is_empty():
+		save_path = _get_save_path(save_name)
+	else:
+		save_path = _get_absolute_path(save_base_path, save_name)
 	var result = await _save_strategy.load_save(save_path, false)
 	if result is Resource:
 		return result
@@ -351,6 +365,11 @@ func _ensure_save_directory_exists() -> void:
 # 获取存档路径
 func _get_save_path(save_name: String) -> String:
 	return _save_strategy.get_save_path(Setting.get_setting_value("save_system/defaults/save_directory"), save_name)
+
+
+# 获取指定导出的绝对路径
+func _get_absolute_path(path: String, save_name: String) -> String:
+	return _save_strategy.get_absolute_path(path, save_name)
 
 
 # 清理旧的自动存档

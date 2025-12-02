@@ -25,6 +25,14 @@ func get_save_path(directory: String, save_name: String) -> String:
 	return ""
 
 
+## 获取存档绝对路径
+## [param directory] 存档文件夹路径
+## [param save_name] 存档文件名
+## [return] 存档路径
+func get_absolute_path(directory: String, save_name: String) -> String:
+	return ""
+
+
 ## 保存数据
 ## [param path] 存档路径
 ## [param data] 存储数据
