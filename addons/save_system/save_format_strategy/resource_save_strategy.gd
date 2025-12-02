@@ -15,11 +15,17 @@ func get_save_name_from_file(file_name: String) -> String:
 
 ## 获取存档路径
 func get_save_path(directory: String, save_name: String) -> String:
+	directory += "/" + save_name
 	return directory.path_join("%s.tres" % save_name)
 
 
 ## 保存存档
 func save(path: String, data: Dictionary, with_metadata: bool = true) -> bool:
+	# 假如不存在路径则创建路径
+	var save_path: String = path.get_base_dir()
+	if not DirAccess.dir_exists_absolute(save_path):
+		DirAccess.make_dir_recursive_absolute(save_path)
+	# 保存元数据
 	var save_data = data.get("data", null) as Resource
 	if with_metadata:
 		save_data = (

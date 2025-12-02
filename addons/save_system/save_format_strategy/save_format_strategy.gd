@@ -50,14 +50,46 @@ func load_metadata(path: String) -> Dictionary:
 	return {}
 
 
-## 删除文件
-## [param path] 存档路径
+## 删除存档 (实际是删除包含该存档的整个文件夹)
+## [param path] 存档的具体文件路径 (例如 .../save_1/save_1.tres)
 ## [return] 是否删除成功
 func delete_file(path: String) -> bool:
-	var dir = DirAccess.open(path.get_base_dir())
-	if not dir:
+	# 1. 获取存档所在的文件夹路径
+	var folder_path = path.get_base_dir()
+	# 2. 检查目录是否存在
+	if not DirAccess.dir_exists_absolute(folder_path):
+		push_warning("尝试删除不存在的存档目录: " + folder_path)
 		return false
-	return dir.remove(path.get_file()) == OK
+	# 3. 安全检查：防止意外删除根目录
+	# 如果 folder_path 恰好等于你的存档根目录 (save_directory)，则不应该删除
+	if folder_path.replace("user://", "").replace("res://", "").strip_edges() == "":
+		return false
+	# 4. 执行递归删除
+	_delete_directory_recursive(folder_path)
+	# 5. 验证结果：如果文件夹不存在了，说明删除成功
+	return not DirAccess.dir_exists_absolute(folder_path)
+
+
+## [私有辅助函数] 递归删除目录及其内容
+func _delete_directory_recursive(dir_path: String) -> void:
+	var dir = DirAccess.open(dir_path)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if dir.current_is_dir():
+				# 跳过当前目录和父目录标识
+				if file_name != "." and file_name != "..":
+					# 递归处理子文件夹
+					_delete_directory_recursive(dir_path.path_join(file_name))
+			else:
+				# 删除文件
+				dir.remove(file_name)
+			file_name = dir.get_next()
+		# 清空后，删除文件夹本身 (必须使用 absolute 路径)
+		DirAccess.remove_absolute(dir_path)
+	else:
+		push_error("无法访问目录进行删除: " + dir_path)
 
 
 ## 列出文件

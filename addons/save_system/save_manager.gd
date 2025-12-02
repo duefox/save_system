@@ -192,8 +192,9 @@ func export_as(save_data: Variant, save_name: String = "") -> bool:
 func load_save(save_name: String) -> bool:
 	if save_name.is_empty():
 		return false
-
 	var save_path = _get_save_path(save_name)
+
+	print("load_save->save_path:", save_path)
 
 	var result = await _save_strategy.load_save(save_path)
 	if not result.is_empty():
@@ -207,19 +208,22 @@ func load_save(save_name: String) -> bool:
 
 
 ## 导入单个独立文件
-func import_as(save_name: String, with_metadata: bool = true) -> Variant:
+func import_as(save_name: String) -> Variant:
 	if save_name.is_empty():
 		return null
 	var save_path = _get_save_path(save_name)
-	var result = await _save_strategy.load_save(save_path, with_metadata)
-	return result
+	var result = await _save_strategy.load_save(save_path, false)
+	if result is Resource:
+		return result
+	elif result is Dictionary:
+		return result.get("data", null)
+	return null
 
 
 ## 删除存档
 func delete_save(save_name: String) -> bool:
 	var save_path = _get_save_path(save_name)
 	var success = _save_strategy.delete_file(save_path)
-
 	if success:
 		if _current_save_name == save_name:
 			_current_save_name = ""
@@ -262,19 +266,23 @@ func create_auto_save(auto_save_name: String = "") -> String:
 ## 获取所有存档列表
 func get_save_list() -> Array[Dictionary]:
 	var saves: Array[Dictionary] = []
-
-	var files = _save_strategy.list_files(save_directory)
-	for file in files:
-		var save_name = _get_save_name_from_file(file)
-		var save_path = _get_save_path(save_name)
-
-		var metadata = await _save_strategy.load_metadata(save_path)
-		if not metadata.is_empty():
-			saves.append({"save_name": save_name, "metadata": metadata})
-
-	# 按时间戳排序
+	var dir = DirAccess.open(save_directory)
+	if dir:
+		# 获取该路径下的所有“子文件夹”名称
+		var folders = dir.get_directories()
+		for folder_name in folders:
+			var save_name = folder_name
+			var save_path = _get_save_path(save_name)
+			if not FileAccess.file_exists(save_path):
+				continue
+			# 加载元数据
+			var metadata = await _save_strategy.load_metadata(save_path)
+			if not metadata.is_empty():
+				saves.append({"save_name": save_name, "metadata": metadata})
+	else:
+		push_error("无法访问存档目录: " + save_directory)
+	# 按时间戳排序 (最新的在前)
 	saves.sort_custom(func(a, b): return a.metadata.timestamp > b.metadata.timestamp)
-
 	return saves
 
 

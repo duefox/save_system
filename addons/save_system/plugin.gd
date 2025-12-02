@@ -11,7 +11,6 @@ const SETTING_INFO_DICT: Dictionary[StringName, Dictionary] = SETTING_SCRIPT.SET
 func _enter_tree() -> void:
 	_add_project_settings()
 	add_autoload_singleton(SYSTEM_NAME, SYSTEM_PATH)
-	
 	ProjectSettings.save()
 
 ## 在禁用插件时恢复项目配置

@@ -17,4 +17,5 @@ func get_save_name_from_file(file_name: String) -> String:
 
 ## 获取存档路径
 func get_save_path(directory: String, save_name: String) -> String:
+	directory += "/" + save_name
 	return directory.path_join("%s.json" % save_name)
