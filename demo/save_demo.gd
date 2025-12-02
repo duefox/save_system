@@ -165,7 +165,7 @@ func _on_btn_save_as_pressed() -> void:
 
 ## 导入单独文件
 func _on_btn_load_as_pressed() -> void:
-	var result: Variant = await SaveSystem.import_as("test_data", false)
+	var result: Variant = await SaveSystem.import_as("test_data")
 	if result is Resource:
 		print("id:", result.id, ",nickname:", result.nickname, ",descrip:", result.descrip)
 	elif result is Dictionary:
